@@ -215,6 +215,8 @@ $(function() {
   .tab {
     overflow: hidden;
     background-color: #36230F;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
   }
 
   /* Style the buttons that are used to open the tab content */
@@ -266,7 +268,22 @@ $(function() {
     border: none;
     background-color: #DFA86C;
   }
-	
+  
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: #fff !important;
+  }
+  
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current, .dataTables_wrapper .dataTables_paginate .paginate_button:hover, .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    color: #fff !important;
+    background: none;
+	border: none;
+	background-color: #DFA86C;
+  }
+  
+  table.dataTable thead th {
+    border-bottom: 1px solid #fff;
+	color:  #DFA86C;
+  }
   </style>
 </head>
 
