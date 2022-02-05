@@ -1,0 +1,398 @@
+<html>
+<head>
+  <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+  <meta content="utf-8" http-equiv="encoding">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+
+<!--     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>  <script>
+
+function openCity(evt, cityName) {
+  // Declare all variables
+  var i, tabcontent, tablinks;
+
+  // Get all elements with class="tabcontent" and hide them
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Get all elements with class="tablinks" and remove the class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Show the current tab, and add an "active" class to the button that opened the tab
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0');
+var yyyy = today.getFullYear();
+today = yyyy + '-' +  mm + '-' + dd;
+
+
+var yesterday_date = new Date();
+yesterday_date.setDate(yesterday_date.getDate() - 1);
+var y_dd = String(yesterday_date.getDate()).padStart(2, '0');
+var y_mm = String(yesterday_date.getMonth() + 1).padStart(2, '0');
+var y_yyyy = yesterday_date.getFullYear();
+yesterday = y_yyyy + '-' +  y_mm + '-' + y_dd;
+
+
+$(function() {
+    var people = [];
+    const loadTodayPromise = new Promise((resolve, reject) => {     
+		$.getJSON(`database/${today}.json`, function(data) {
+			$(`<span>${data.precise_date}</span>`).appendTo("#dateTracker");
+			$.each(data.players, function(g, h) {
+			var attrRow = "<tr>" +
+				`<td id="ext_attr_rank_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.rank}>` + h.ext_attributes.rank + "</td>" +
+				`<td class='font-black'>` + h.name+ "</td>" +
+				`<td>` + h.class+ "</td>" +
+				`<td id="ext_attr_lvl_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.lvl}>` + h.ext_attributes.lvl + "</td>" +
+				`<td id="ext_attr_power_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.power}>` + h.ext_attributes.power + "</td>" +
+				`<td id="ach_attr_vault_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.vault}>` + h.ach_attributes.vault + "</td>" +
+				`<td id="ach_attr_survival_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.survival}>` + h.ach_attributes.survival + "</td>" +
+				`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.str}>` + h.attributes.str + "</td>" +
+				`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.agi}>` + h.attributes.agi + "</td>" +
+				`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.int}>` + h.attributes.int + "</td>" +
+				`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.end}>` + h.attributes.end + "</td>" +
+				`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.lck}>` + h.attributes.lck + "</td>" +
+            "</tr>"
+			$(attrRow).appendTo("#player_attributes tbody");
+			});
+			indexCounter=0;
+			$.each(data.players, function(g, h) {
+				if(h.class == "Knight"){
+					var attrRow = "<tr>" +
+						`<td id="ext_attr_rank_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.rank}>` + h.ext_attributes.rank + "</td>" +
+						`<td class='font-black'>` + h.name+ "</td>" +
+						`<td>` + h.class+ "</td>" +
+						`<td id="ext_attr_lvl_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.lvl}>` + h.ext_attributes.lvl + "</td>" +
+						`<td id="ext_attr_power_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.power}>` + h.ext_attributes.power + "</td>" +
+						`<td id="ach_attr_vault_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.vault}>` + h.ach_attributes.vault + "</td>" +
+						`<td id="ach_attr_survival_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.survival}>` + h.ach_attributes.survival + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.str}>` + h.attributes.str + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.agi}>` + h.attributes.agi + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.int}>` + h.attributes.int + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.end}>` + h.attributes.end + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.lck}>` + h.attributes.lck + "</td>" +
+					"</tr>"
+					$(attrRow).appendTo("#knight tbody");
+				}
+			});
+			$.each(data.players, function(g, h) {
+				if(h.class == "Ranger"){
+					var attrRow = "<tr>" +
+						`<td id="ext_attr_rank_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.rank}>` + h.ext_attributes.rank + "</td>" +
+						`<td class='font-black'>` + h.name+ "</td>" +
+						`<td>` + h.class+ "</td>" +
+						`<td id="ext_attr_lvl_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.lvl}>` + h.ext_attributes.lvl + "</td>" +
+						`<td id="ext_attr_power_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.power}>` + h.ext_attributes.power + "</td>" +
+						`<td id="ach_attr_vault_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.vault}>` + h.ach_attributes.vault + "</td>" +
+						`<td id="ach_attr_survival_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.survival}>` + h.ach_attributes.survival + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.str}>` + h.attributes.str + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.agi}>` + h.attributes.agi + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.int}>` + h.attributes.int + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.end}>` + h.attributes.end + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.lck}>` + h.attributes.lck + "</td>" +
+					"</tr>"
+					$(attrRow).appendTo("#ranger tbody");
+				}
+			});
+			$.each(data.players, function(g, h) {
+				if(h.class == "Rebel"){
+					var attrRow = "<tr>" +
+						`<td id="ext_attr_rank_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.rank}>` + h.ext_attributes.rank + "</td>" +
+						`<td class='font-black'>` + h.name+ "</td>" +
+						`<td>` + h.class+ "</td>" +
+						`<td id="ext_attr_lvl_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.lvl}>` + h.ext_attributes.lvl + "</td>" +
+						`<td id="ext_attr_power_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.power}>` + h.ext_attributes.power + "</td>" +
+						`<td id="ach_attr_vault_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.vault}>` + h.ach_attributes.vault + "</td>" +
+						`<td id="ach_attr_survival_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.survival}>` + h.ach_attributes.survival + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.str}>` + h.attributes.str + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.agi}>` + h.attributes.agi + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.int}>` + h.attributes.int + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.end}>` + h.attributes.end + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.lck}>` + h.attributes.lck + "</td>" +
+					"</tr>"
+					$(attrRow).appendTo("#rebel tbody");
+				}
+			});
+			$.each(data.players, function(g, h) {
+				if(h.class == "Wizard"){
+					var attrRow = "<tr>" +
+						`<td id="ext_attr_rank_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.rank}>` + h.ext_attributes.rank + "</td>" +
+						`<td class='font-black'>` + h.name+ "</td>" +
+						`<td>` + h.class+ "</td>" +
+						`<td id="ext_attr_lvl_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.lvl}>` + h.ext_attributes.lvl + "</td>" +
+						`<td id="ext_attr_power_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.power}>` + h.ext_attributes.power + "</td>" +
+						`<td id="ach_attr_vault_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.vault}>` + h.ach_attributes.vault + "</td>" +
+						`<td id="ach_attr_survival_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.survival}>` + h.ach_attributes.survival + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.str}>` + h.attributes.str + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.agi}>` + h.attributes.agi + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.int}>` + h.attributes.int + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.end}>` + h.attributes.end + "</td>" +
+						`<td id="attr_total_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.attributes.lck}>` + h.attributes.lck + "</td>" +
+					"</tr>"
+					$(attrRow).appendTo("#wizard tbody");
+				}
+			});
+		});
+		resolve(true)
+    })
+});
+
+
+  setTimeout(function(){ document.getElementById("defaultOpen").click();
+        $(document).ready( function () {
+
+        language = {search: "Search:", lengthMenu: "Show me: _MENU_ players", info: "Displaying _START_ to _END_ of _TOTAL_ total players", paginate: {
+        first: "First",
+        previous: "Previous Page",
+        next: "Next Page",
+        last: "Last",
+      },zeroRecords: "No records. Refresh, Remove filters, or contact @Groktilian on discord to update stats.", infoFiltered: "(Filtered from _MAX_ records)",}
+
+         lengthMenu = [
+      [10, 25, 50, 100,-1],
+      [10, 25, 50, 100, "All"],
+    ],
+
+        $('#player_attributes').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
+        $('#knight').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
+		$('#ranger').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
+		$('#rebel').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
+		$('#wizard').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
+
+   } );}, 400);
+  </script>
+
+  <style>
+
+  body{
+    background-color:#171510;
+	color: #fff;
+  }
+  .title {
+    
+  }
+  .arrow-up {
+    display: inline-block;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+
+    border-bottom: 5px solid green;
+  }
+
+  .arrow-down {
+    display: inline-block;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+
+    border-top: 5px solid red;
+  }
+
+
+  /* Style the tab */
+  .tab {
+    overflow: hidden;
+    background-color: #36230F;
+  }
+
+  /* Style the buttons that are used to open the tab content */
+  .tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+	border-radius: 3px;
+  }
+
+  /* Change background color of buttons on hover */
+  .tab button:hover {
+    background-color: #DFA86C;
+
+  }
+
+  /* Create an active/current tablink class */
+  .tab button.active {
+    background-color: #DFA86C;
+  }
+
+  /* Style the tab content */
+  .tabcontent {
+    display: none;
+    border-top: none;
+    background-color: #171510;
+  }
+  .table-dark {
+    --bs-table-bg: #171510
+  }
+  .dataTables_wrapper {
+    color: #fff;
+	background-color: #36230F;
+	padding: 3px;
+	
+  }
+  .dataTables_wrapper .dataTables_length, .dataTables_wrapper .dataTables_filter, .dataTables_wrapper .dataTables_info, .dataTables_wrapper .dataTables_processing, .dataTables_wrapper .dataTables_paginate {
+    color: #fff;
+	background-color: #36230F;
+	padding-left: 20px;
+	padding-right: 20px;
+  }
+  
+  .dataTables_wrapper .dataTables_length select, .dataTables_wrapper .dataTables_filter input{
+    border: none;
+    background-color: #DFA86C;
+  }
+	
+  </style>
+</head>
+
+<body>
+
+<div class="wrapper p-40">
+<h1 class="title">Lost Vault Player Rankings</h1>
+  <div class="profile">
+
+    <div class="tab flex items-center justify-between">
+      <div>
+        <button class="tablinks" onclick="openCity(event, 'All Rankings')" id="defaultOpen">All Rankings</button>
+		<button class="tablinks" onclick="openCity(event, 'Knight')">Knight</button>
+		<button class="tablinks" onclick="openCity(event, 'Ranger')">Ranger</button>
+		<button class="tablinks" onclick="openCity(event, 'Rebel')">Rebel</button>
+		<button class="tablinks" onclick="openCity(event, 'Wizard')">Wizard</button>
+      </div>
+      <span class="tablinks pr-5" id="dateTracker">Last Updated: </span>
+    </div>
+	
+    <div id="All Rankings" class="tabcontent">
+      <table class="table table-sm table-dark" id="player_attributes">
+        <thead>
+		<th id="index">Rank</th>
+        <th>Character</th>
+		<th>Class</th>
+		<th>Level</th>
+        <th>Power</th>
+        <th>Vault</th>
+        <th>Survival</th>
+        <th>Strength</th>
+		<th>Agility</th>
+		<th>Intelligence</th>
+		<th>Endurance</th>
+		<th>Luck</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+	
+	<div id="Knight" class="tabcontent">
+      <table class="table table-sm table-dark" id="knight">
+        <thead>
+		<th>Rank</th>
+        <th>Character</th>
+		<th>Class</th>
+		<th>Level</th>
+        <th>Power</th>
+        <th>Vault</th>
+        <th>Survival</th>
+        <th>Strength</th>
+		<th>Agility</th>
+		<th>Intelligence</th>
+		<th>Endurance</th>
+		<th>Luck</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+	
+	<div id="Ranger" class="tabcontent">
+      <table class="table table-sm table-dark" id="ranger">
+        <thead>
+		<th>Rank</th>
+        <th>Character</th>
+		<th>Class</th>
+		<th>Level</th>
+        <th>Power</th>
+        <th>Vault</th>
+        <th>Survival</th>
+        <th>Strength</th>
+		<th>Agility</th>
+		<th>Intelligence</th>
+		<th>Endurance</th>
+		<th>Luck</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+	
+	<div id="Rebel" class="tabcontent">
+      <table class="table table-sm table-dark" id="rebel">
+        <thead>
+		<th>Rank</th>
+        <th>Character</th>
+		<th>Class</th>
+		<th>Level</th>
+        <th>Power</th>
+        <th>Vault</th>
+        <th>Survival</th>
+        <th>Strength</th>
+		<th>Agility</th>
+		<th>Intelligence</th>
+		<th>Endurance</th>
+		<th>Luck</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+	
+	<div id="Wizard" class="tabcontent">
+      <table class="table table-sm table-dark" id="wizard">
+        <thead>
+		<th>Rank</th>
+        <th>Character</th>
+		<th>Class</th>
+		<th>Level</th>
+        <th>Power</th>
+        <th>Vault</th>
+        <th>Survival</th>
+        <th>Strength</th>
+		<th>Agility</th>
+		<th>Intelligence</th>
+		<th>Endurance</th>
+		<th>Luck</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+	
+  </div>
+</div>
+</body>
+</html>
