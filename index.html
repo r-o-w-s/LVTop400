@@ -52,7 +52,13 @@ yesterday = y_yyyy + '-' +  y_mm + '-' + y_dd;
 
 $(function() {
     var people = [];
-    const loadTodayPromise = new Promise((resolve, reject) => {     
+    const loadTodayPromise = new Promise((resolve, reject) => {
+	$.get(`database/${today}.json`)
+		.done(function() { 
+        // exists code 
+		}).fail(function() { 
+        today = yesterday_date;
+    })
 		$.getJSON(`database/${today}.json`, function(data) {
 			$(`<span>${data.precise_date}</span>`).appendTo("#dateTracker");
 			$.each(data.players, function(g, h) {
@@ -72,7 +78,6 @@ $(function() {
             "</tr>"
 			$(attrRow).appendTo("#player_attributes tbody");
 			});
-			indexCounter=0;
 			$.each(data.players, function(g, h) {
 				if(h.class == "Knight"){
 					var attrRow = "<tr>" +
@@ -149,6 +154,17 @@ $(function() {
 					$(attrRow).appendTo("#wizard tbody");
 				}
 			});
+			$.each(data.players, function(g, h) {
+			var attrRow = "<tr>" +
+				`<td id="ext_attr_rank_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.rank}>` + h.ext_attributes.rank + "</td>" +
+				`<td class='font-black'>` + h.name+ "</td>" +
+				`<td id="ach_attr_explores_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.explores}>` + h.ach_attributes.explores + "</td>" +
+				`<td id="ach_attr_quests_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.quests}>` + h.ach_attributes.quests + "</td>" +
+				`<td id="ach_attr_monsters_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.monsters}>` + h.ach_attributes.monsters + "</td>" +
+				`<td id="ach_attr_caravan_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ach_attributes.caravan.replace("h", "")}>` + h.ach_attributes.caravan + "</td>" +
+            "</tr>"
+			$(attrRow).appendTo("#player_secondary tbody");
+			});
 		});
 		resolve(true)
     })
@@ -175,6 +191,7 @@ $(function() {
 		$('#ranger').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
 		$('#rebel').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
 		$('#wizard').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
+		$('#player_secondary').DataTable({dom: "lfrtip", language: language, lengthMenu: lengthMenu, "aoColumns": [null,null,{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] },{ "orderSequence": [ "desc", "asc" ] }]});
 
    } );}, 400);
   </script>
@@ -306,6 +323,7 @@ $(function() {
 		<button class="tablinks" onclick="openCity(event, 'Ranger')">Ranger</button>
 		<button class="tablinks" onclick="openCity(event, 'Rebel')">Rebel</button>
 		<button class="tablinks" onclick="openCity(event, 'Wizard')">Wizard</button>
+		<button class="tablinks" onclick="openCity(event, 'All Players - Secondary Stats')">All Players - Secondary Stats</button>
       </div>
       <span class="tablinks pr-5" id="dateTracker">Last Updated: </span>
     </div>
@@ -415,6 +433,21 @@ $(function() {
       </table>
     </div>
 	
+	<div id="All Players - Secondary Stats" class="tabcontent">
+      <table class="table table-sm table-dark" id="player_secondary">
+        <thead>
+		<th>Rank</th>
+        <th>Character</th>
+        <th>Explorations</th>
+		<th>Quests Completed</th>
+		<th>Monster Kills</th>
+		<th>Caravan Hours</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+
   </div>
   <div class="footer">Questions, suggestions, or bugs please message Groktilian#5789 on discord. :)</div>
 </div>
