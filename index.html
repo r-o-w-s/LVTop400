@@ -57,7 +57,7 @@ $(function() {
 		.done(function() { 
         // exists code 
 		}).fail(function() { 
-        today = yesterday_date;
+        today = yesterday;
     })
 		$.getJSON(`database/${today}.json`, function(data) {
 			$(`<span>${data.precise_date}</span>`).appendTo("#dateTracker");
