@@ -28,14 +28,18 @@ final_result["tribes"] = []
 
 print("Scraping Player Data...")
 for html in raw_htmls:
-    soup = BeautifulSoup(requests.get(html).text, 'html.parser')
+    try:
+        soup = BeautifulSoup(requests.get(html).text, 'html.parser')
+    except AttributeError:
+        print("Could not find -- " + html)
+        continue
 
     # Name
     try:
         class_soup = soup.find("div", class_="sub header")
         class_soup.find("i").decompose()
     except AttributeError:
-        print("nonetype at: " + html)
+        pass
 
     
     player_class = class_soup.get_text().strip()

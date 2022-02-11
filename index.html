@@ -49,18 +49,18 @@ var y_mm = String(yesterday_date.getMonth() + 1).padStart(2, '0');
 var y_yyyy = yesterday_date.getFullYear();
 yesterday = y_yyyy + '-' +  y_mm + '-' + y_dd;
 
+$.get(`database/${today}.json`)
+	.done(function() { 
+        // exists code 
+	}).fail(function() { 
+        today = yesterday;
+    })
 
 $(function() {
     var people = [];
     const loadTodayPromise = new Promise((resolve, reject) => {
-	$.get(`database/${today}.json`)
-		.done(function() { 
-        // exists code 
-		}).fail(function() { 
-        today = yesterday;
-    })
 		$.getJSON(`database/${today}.json`, function(data) {
-			$(`<span>${data.precise_date}</span>`).appendTo("#dateTracker");
+			$(`<span><a href="database/${today}.json">${data.precise_date}</a></span>`).appendTo("#dateTracker");
 			$.each(data.players, function(g, h) {
 			var attrRow = "<tr>" +
 				`<td id="ext_attr_rank_${h.name.replace(/\d+/g, '').replace(/\s/g, '')}" data-order=${h.ext_attributes.rank}>` + h.ext_attributes.rank + "</td>" +
